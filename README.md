@@ -1,2 +1,0 @@
-# phsemgram
-Chinese character analysis
