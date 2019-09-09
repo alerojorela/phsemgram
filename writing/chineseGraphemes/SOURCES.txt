@@ -1,0 +1,44 @@
+My data is derived from:
+
+KEY BaxterSagart	{BaxterSagart: ...}
+	Baxter, William H., and Laurent Sagart. 2014. Old Chinese: a new reconstruction. New York: Oxford University Press.
+	found at 
+		http://ocbaxtersagart.lsait.lsa.umich.edu/
+		BaxterSagartOC2015-10-13.xlsx
+	via https://en.m.wiktionary.org/wiki/Appendix:Baxter-Sagart_Old_Chinese_reconstruction
+
+
+KEY graphicaldecomposition	{graphicaldecomposition: ...}
+	Grapheme graphical decomposition 
+	found at:
+		https://commons.wikimedia.org/wiki/Commons:Chinese_characters_decomposition
+		'The graphical decomposition of a character reflects the etymological (or historical) composition most of the time, but not always'
+
+Other KEYS
+	found at
+		https://www.skishore.me/makemeahanzi/
+
+	dictionary.txt is derived from:
+	    Unihan - http://unicode.org/charts/unihan.html
+	    CJKlib - https://github.com/cburgmer/cjklib
+
+	You can redistribute and/or modify dictionary.txt under the terms of the GNU
+	Lesser General Public License as published by the Free Software Foundation,
+	either version 3 of the license, or (at your option) any later version. You
+	should have recieved a copy of this license (the file "LGPL") along with
+	dictionary.txt; if not, see see <http://www.gnu.org/licenses/>.
+
+
+
+OTHER RESOURCES
+	pinyin2ipa
+		at https://github.com/Connum/npm-pinyin2ipa
+		MIT © Connum
+		based on flexdinesh/npm-module-boilerplate, MIT © Dinesh Pandiyan
+
+	CSS
+		http://dabblet.com/gist/6878696
+		via http://stackoverflow.com/questions/14922247/how-to-get-a-tree-in-html-using-pure-css
+
+
+

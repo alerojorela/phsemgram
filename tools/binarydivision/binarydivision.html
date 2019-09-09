@@ -1,0 +1,258 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Alejandro Rojo">
+  <title>Binary Tree Diagrammer</title>
+
+  <meta http-equiv="Content-Type" content="svg/xml" />
+
+  <!-- scripts -->
+  <script src="../../jsexternal/jquery-3.3.1.min.js"></script>
+
+  <!-- My scripts -->
+  <script src="../../js/common.js"></script>
+  <script src="../../js/parsernode.js"></script>
+  <script src="../../js/taxogrid.js"></script>
+  <script src="../../js/binarydivision.js"></script>
+
+  <!-- styles -->
+  <link rel="stylesheet" type="text/css" href="../../style/common.css" />
+  <link rel="stylesheet" type="text/css" href="../../style/graphicOutput.css" />
+  <link rel="stylesheet" type="text/css" href="./binarydivision.css" />
+
+  <style type="text/css">
+    svg {
+      border: 1px dotted black;
+    }
+
+    .canvas {
+      background: #fff;
+    }
+
+    .ADownloadFile {
+      border: 1px solid black;
+      background: #2b4a5a;
+      color: #fff;
+      border-radius: 3px;
+      padding: 3px 15px;
+
+    }
+
+    #URLTextBox {
+      height: 20px;
+      min-width: auto;
+
+    }
+
+    div.hiddenBeforeProcessing {
+      margin: 0 auto;
+      display: flex;
+    }
+
+    button.a {
+      color: #fff;
+    }
+  </style>
+
+<body>
+  <header>
+    <div class="license">
+      <div>
+        <a href="https://creativecommons.org/licenses/by-nc/2.0/">
+          <img class="invert" src="../../img/license_CC.png" />
+          <img class="invert" src="../../img/license_Attribution.png" />
+          <img class="invert" src="../../img/license_NonCommercial.png" />
+          <!--
+              <img class="invert" src="https://creativecommons.org/images/deed/cc_icon_white_x2.png" />
+              <img class="invert" src="https://creativecommons.org/images/deed/attribution_icon_white_x2.png" />
+              <img class="invert" src="https://creativecommons.org/images/deed/nc_white_x2.png" />
+              -->
+        </a>
+        <span>2019 <a href="../../aboutme.html">Alejandro Rojo</a></span>
+      </div>
+      <div>
+        <a href="../../index.html" title="Title">Return</a> to main page
+      </div>
+    </div>
+
+  </header>
+
+  <main>
+    <header class="inputarea">
+      <h1>Binary Tree Diagrammer</h1>
+
+      <label for="linkstextbox"></label>
+      <textarea id="ARRAYinput">[TP	[NP [Det Esta] [N herramienta]]
+        [VP [V crea] [NP [N diagramas] [PP [Prep de] [NP [N división] [AdjP [Adj binaria]]]]]]]</textarea>
+
+      <div id="inputbar">
+        <input type="button" value="Render" onclick="Run();" />
+        <input type="button" value="Tabify input" onclick="TabifyInput();" />
+        <input type="button" value="Condense input" onclick="CondenseInput();" />
+
+        <a class="ADownloadFile hiddenBeforeProcessing" id="SaveSVG" href="">Save as SVG</a>
+        <input class="hiddenBeforeProcessing" type="button" value="Copy URL" onclick="CopyURL();" />
+        <textarea class="hiddenBeforeProcessing" id="URLTextBox"></textarea>
+      </div>
+
+      <div id="infoarea" class="hiddenAfterProcessing">
+        <div>
+          <p>This app renders a diagram of a recursive <strong>binary structure</strong>. No more than two children
+            per node are allowed.</p>
+          <details>
+            <summary>Notation specification</summary>
+            brackets <strong>[ ]</strong> represent hierarchy,
+            <strong>space</strong> separates tokens,
+            and quotation marks <strong>" "</strong> or <strong>« »</strong> group tokens that contain spaces
+          </details>
+
+          <p>Este programa elabora un diagrama de una estructura de <strong>división binaria</strong>
+            recursiva.
+            No se admiten aquí más de dos elementos por nodo.</p>
+          <details>
+            <summary>Instrucciones sobre la notación</summary>
+            <p>Use los caracteres reservados [] para representar constituyentes. <strong>La etiqueta debe ser el primer
+                elemento</strong> en el vector pero puede remplazarse por un espacio vacío</p>
+          </details>
+        </div>
+
+      </div>
+    </header>
+
+    <main>
+
+      <canvas></canvas>
+    </main>
+
+  </main>
+
+  <footer></footer>
+
+
+  <script>
+
+    var thisURL = [location.protocol, '//', location.host, location.pathname].join('');
+
+
+    // after document is loaded
+    // e.g. ...html?q=[DP [Det Esta] [NP [N herramienta]]]
+    window.onload = function () {
+      var idArray = GetURLParameter("q")
+      console.log(idArray);
+      if (idArray !== undefined) {
+        for (var n = 0; n < idArray.length; n++) {
+          console.log(n, idArray[n], decodeURI(idArray[n]));
+        }
+
+        var input = document.getElementById("ARRAYinput");
+        input.value = decodeURI(idArray[0]);
+        Run();
+      }
+    }
+
+
+    var CopyURL = function () {
+      var obj = document.getElementById("URLTextBox");
+      obj.select();
+      document.execCommand("copy");
+    }
+
+
+
+
+
+    var TabifyInput = function () {
+      var rawexpr = document.getElementById("ARRAYinput").value;
+      var obj = ParseBrackettedExpr(rawexpr);
+
+      if (obj !== undefined) {
+        var be = objectToBracketedExpression(obj, true);
+        document.getElementById("ARRAYinput").value = be;
+      }
+    }
+
+
+    var CondenseInput = function () {
+      var rawexpr = document.getElementById("ARRAYinput").value;
+      var obj = ParseBrackettedExpr(rawexpr);
+
+      if (obj !== undefined) {
+        var be = objectToBracketedExpression(obj);
+        document.getElementById("ARRAYinput").value = be;
+      }
+    }
+
+
+    // https://stackoverflow.com/questions/21070101/show-hide-div-using-javascript
+    var AlternaInterfaz = function (value) {
+
+      // document.getElementsByTagName("canvas")[0].innerHTML = "";
+      if (value == false) {
+
+      } else {
+
+      }
+
+      var hbplist = document.getElementsByClassName("hiddenBeforeProcessing");
+      for (var n = 0; n < hbplist.length; n++) {
+        hbplist[n].style.display = value == true ? 'inline' : 'none';
+      }
+
+      var hbplist = document.getElementsByClassName("hiddenAfterProcessing");
+      for (var n = 0; n < hbplist.length; n++) {
+        hbplist[n].style.display = value == false ? 'inline' : 'none';
+      }
+
+    }
+
+    var Run = function () {
+      console.log('run()');
+
+      var rawexpr = document.getElementById("ARRAYinput").value;
+
+
+      //var obj = Convert(rawexpr);
+      var obj = ParseBrackettedExpr(rawexpr);
+
+      if (obj === undefined) {
+        AlternaInterfaz(false);
+        //$('details').attr
+        var details = document.getElementsByTagName("details")[0];
+        details.setAttributeNS(null, 'open', '');
+
+        return undefined;
+      }
+
+      // console.log('>\t', JSON.stringify(    PARSER.parse(rawexpr)  ));
+
+      var renderedobj = Render(obj);
+
+      $('canvas').empty();
+      const canvas = document.getElementsByTagName("canvas")[0];
+      canvas.width = renderedobj.ContainerSize.width;
+      canvas.height = renderedobj.ContainerSize.height;
+
+      const RenderRaster = true;//   false     true
+      if (RenderRaster) {
+        drawInlineSVG(canvas, renderedobj.content.firstChild);
+      } else {
+        canvas.appendChild(renderedobj.content.firstChild);
+      }
+
+      // SVG download
+      hyperlinkDownload('SaveSVG', 'Diagram.svg', renderedobj.content.firstChild.outerHTML, 'text/plain');
+      // Link page
+      var enc = encodeURI(thisURL + "?q=" + rawexpr);
+      document.getElementById("URLTextBox").innerHTML = enc;
+
+      AlternaInterfaz(true);
+    }
+
+
+  </script>
+</body>
+
+
+</html>

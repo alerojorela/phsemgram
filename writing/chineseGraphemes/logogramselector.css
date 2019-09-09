@@ -1,0 +1,107 @@
+#selection {
+    cursor: pointer;
+
+  }
+
+  #selection:hover {
+    background-color: violet;
+    color: white;
+  }
+
+
+
+  /* The Modal (background) */
+  .modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    padding-top: 100px;
+    /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+  }
+
+  /* Modal Content */
+  .modal-content {
+    opacity: 50%;
+    background-color: white;
+    color: black;
+    margin: auto;
+    padding: 20px;
+    width: 60vw;
+
+    border-radius: 13px;
+    /*! -webkit-box-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.75); */
+    -moz-box-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.75);
+    /*! box-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.75); */
+  }
+
+  .modal .resetbutton,
+  .modal .applybutton,
+  .modal .closebutton {
+    cursor: pointer;
+  }
+
+  .modal .resetbutton:hover,
+  .modal .applybutton:hover,
+  .modal .closebutton:hover {
+    color: violet;
+  }
+
+
+
+
+  #radicalselection {
+    /* border: 2px solid black; */
+  }
+
+  #radicalselection span {
+    border: 1px solid #ddd;
+  }
+
+  #radicalselection span:hover {
+    cursor: pointer;
+
+    /* reverse color */
+    color: white;
+    background-color: black;
+
+    border: 1px solid black;
+    font-weight: 700;
+  }
+
+  #radicalselection .selected {
+    color: white;
+    background-color: red;
+
+    font-weight: 700;
+  }
+
+
+
+  #logogramsfilter {
+    display: none;
+    margin: 10px 0;
+    padding: 5px;
+    border: 1px dotted red;
+
+    min-height: 1em;
+  }
+
+  #logogramsfilter span:hover {
+    color: red;
+    cursor: pointer;
+  }

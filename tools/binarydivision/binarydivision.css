@@ -1,0 +1,24 @@
+
+
+    g line {
+        stroke: #777;
+        stroke-width: 2px;
+      }
+    svg text {
+      text-anchor: middle;
+      font-family: 'Lucida Console Unicode', Arial, Helvetica, Serif;
+    }
+
+    svg text.nonbinary {
+      /*
+       fill: red; 
+      */
+    }
+
+    svg text.token {
+      font-weight: bold;
+    }
+
+    svg text.word {
+      font-style: italic;
+    }

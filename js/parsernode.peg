@@ -1,0 +1,111 @@
+expression = _? 
+	"[" _? 
+	tag:(t:token _? {return t;} )* 
+	children:(child:expression _? {return child;} )*
+	"]"  
+	    {
+	      var output = {name: ''};
+	      if (tag !==null) {
+	        output.namesubstrings = tag;
+	        output.name = tag.join(" ").trim();
+	      }
+	      if (children.length > 0) output.children = children;
+	      return output;
+	    }
+
+token = "«" s:nonreservedchar* "»" { return s.join("").trim(); }
+        / "\"" s:nonreservedchar* "\"" { return s.join("").trim(); }
+        / s:nonreservednonwhitespacechar+  { return s.join("").trim(); }
+
+nonreservednonwhitespacechar = [^ \t\n\r\[\]\"«»]
+nonreservedchar = [^\[\]\"«»]
+reservedchar = [\[\]\"«»]
+_ "whitespace" = [ \t\n\r]+
+
+
+
+
+TESTS
+============================================
+RAW
+	[ [  [  ] [ [] ]  ] ]
+STRING
+	[  Alfa "beta  gamma" «»  delta epsilon «dseta eta zeta» [B [ C ] [ E ]]]
+
+
+[ Alfa beta  ]
+[ Alfa beta [B]]
+[ Alfa beta [ B [ C ] ] ]
+
+[  Alfa beta gamma [B [ C ] [ E ]]]
+
+[ "Alfa béta" gamma 
+[ B [ C ] 
+[ E [ E' ] [ E'' ]]
+ ] ]
+
+
+
+TODO
+===================================
+
+STRING DISCONTINUITY
+[dseta [eta] zeta]
+
+STRING NESTING?
+«A «B» C»
+-> ["Alfa", "beta gamma"]
+
+
+===================================
+
+expression = _?
+        "[" _? tag:token* children:(child:expression _? {return child;} )* "]"  
+        {
+          var output = {name: ''};
+          if (tag !==null) {
+            output.name = tag.join(" ").trim();
+            if (tag.length > 0) output.namesubstrings = tag;
+          }
+          if (children.length > 0) output.children = children;
+          return output;
+        }
+
+token = "«" s:nonreservedchar* "»" _? { return s.join("").trim(); }
+        / "\"" s:nonreservedchar* "\"" _? { return s.join("").trim(); }
+        / s:nonreservednonwhitespacechar+ _?  { return s.join("").trim(); }
+
+nonreservednonwhitespacechar = [^ \t\n\r\[\]\"«»]
+nonreservedchar = [^\[\]\"«»]
+reservedchar = [\[\]\"«»]
+_ "whitespace" = [ \t\n\r]+
+
+
+
+expression = _?
+        "[" _? tag:tag? children:(child:expression _? {return child;} )* "]"  
+        {
+          var output = {name: ''};
+          if (tag !==null) {
+            output.name = tag.join(" ").trim();
+            if (tag.length > 0) output.namesubstrings = tag;
+          }
+          if (children.length > 0) output.children = children;
+          return output;
+        }
+
+tag = t:token+
+token = "«" s:nonreservedchar* "»" _? { return s.join("").trim(); }
+        / "\"" s:nonreservedchar* "\"" _? { return s.join("").trim(); }
+        / s:nonreservednonwhitespacechar+ _?  { return s.join("").trim(); }
+
+
+nonreservednonwhitespacechar = [^ \t\n\r\[\]\"«»]
+nonreservedchar = [^\[\]\"«»]
+reservedchar = [\[\]\"«»]
+_ "whitespace" = [ \t\n\r]+
+
+
+
+
+

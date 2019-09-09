@@ -1,0 +1,875 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Alejandro Rojo">
+  <title>Semantic-phonetic analysis of chinese logograms</title>
+
+  <meta http-equiv="Content-Type" content="svg/xml" />
+
+  <!-- scripts -->
+  <script src="../../jsexternal/jquery-3.3.1.min.js"></script>
+  <script src='../../jsexternal/npm-pinyin2ipa-master/dist/pinyin2ipa.min.js'></script>
+  <script src="../../jsexternal/d3.v3.min.js"></script>
+
+  <!--
+  <script src="../../jsexternal/fitty.min.js"></script>
+   <script src="../../jsexternal/TextFit-master/jquery.textfit.js"></script>
+  -->
+
+
+  <!-- My scripts -->
+  <script src="../../js/common.js"></script>
+
+
+  <script src="../../js/taxogrid.js"></script>
+  <script src="../../js/binarydivision.js"></script>
+
+  <!-- data -->
+  <script src="./data/derivedmergeddata.js"></script>
+  <script src="./analysis.js"></script>
+
+
+  <!-- styles -->
+  <link rel="stylesheet" type="text/css" href="../../style/common.css" />
+  <!--
+  <link rel="stylesheet" type="text/css" href="../../style/graphicOutput.css" />
+  -->
+  <link rel="stylesheet" type="text/css" href="../../style/graphicOutput.css" />
+  <link rel="stylesheet" type="text/css" href="../../style/taxogrid.css">
+
+  <!-- groups scripts/styles -->
+  <script src="./radialdiagram.js"></script>
+  <link rel="stylesheet" type="text/css" href="./radialdiagram.css">
+  <link rel="stylesheet" type="text/css" href="./logogramselector.css">
+
+  <style>
+    .ipa {
+      color: orange;
+    }
+  </style>
+
+  <!-- dark mode adjustments -->
+  <style>
+    body {
+      background-color: #1d1d1d;
+      color: white;
+    }
+
+    svg text {
+      fill: white;
+    }
+
+    svg .node path {
+      stroke: black;
+    }
+
+
+    .license {
+      border-bottom-color: #84ffed;
+    }
+
+    header .license {
+      border-bottom: 1px dotted #84ffed;
+    }
+
+    footer .license {
+      border-top: 1px dotted #84ffed;
+    }
+
+    a {
+      color: #84ffed;
+    }
+
+    a:visited {
+      color: #84ffed;
+      /* #f97ede; */
+    }
+  </style>
+
+  <!--
+    /*
+    body
+      main
+        .tabselection
+          1
+            detailssection
+              taxogramsection
+                grapheme
+                semantictaxogram
+                graphictaxogram
+              notaphonosemantogram
+              treesection
+                tree
+                definitiontree
+          2
+            diagramsection
+          3
+            sentences
+        aside
+      footer
+    */
+-->
+  <!-- flex layout -->
+  <style>
+    /***************************
+    ****************************
+            main level
+    ****************************
+    ***************************/
+
+    * {
+      /*
+      border: 1px solid fuchsia;
+      */
+      margin: 0;
+      padding: 0;
+    }
+
+
+
+    body {
+      height: 99vh;
+      width: 100vw;
+    }
+
+    footer {
+      padding: 0 10px;
+    }
+
+    main {
+      display: flex;
+      flex-direction: row;
+
+      height: 100%;
+      padding: 0;
+    }
+
+    /* alternate flex orientation to vertical */
+    .tabselection+aside {
+      display: flex;
+      flex-direction: column;
+
+      width: 5vw;
+    }
+
+    .tabselection+aside>* {
+      /* flex-grow fills available space */
+      flex-grow: 1;
+
+      /* for text centering */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      writing-mode: vertical-lr;
+    }
+
+
+    .tabselection {
+      /* flex-grow fills available space */
+      flex-grow: 1;
+      height: 100%;
+    }
+
+    .tabselection>* {
+      height: 100%;
+    }
+
+
+
+
+    #detailssection {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+
+      height: 100%;
+    }
+
+    #taxogramsection {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+
+      align-items: flex-start;
+      height: 30%;
+    }
+
+
+    #notaphonosemantogram {
+      height: 5%;
+    }
+
+    #treesection {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+
+      align-items: center;
+      height: 50%;
+
+      padding-bottom: 30px;
+    }
+
+    #tree {
+      height: 100%;
+    }
+
+
+
+    #diagramsection {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+
+      /* fill parent */
+      width: 100%;
+      height: 100%;
+    }
+
+    #radialdiagram {
+      /* fill parent */
+      width: 100%;
+      height: 100%;
+    }
+
+    /***************************
+    ****************************
+            2nd level
+    ****************************
+    ***************************/
+
+    /***************************
+    ****************************
+            3rd level
+    ****************************
+    ***************************/
+
+    #tabs>:nth-child(1),
+    #option1+label {
+      background-color: #1d1d1d;
+    }
+
+    #tabs>:nth-child(2),
+    #option2+label {
+      background-color: rgb(51, 0, 51);
+    }
+
+
+    .tabselection>* {
+      padding: 6px;
+    }
+
+    /* 1 taxogramsection */
+    #taxogramsection {
+      text-align: center;
+    }
+
+    #taxogramsection>*,
+    #treesection>* {
+      margin: 0 20px;
+    }
+
+
+    #grapheme .squared {
+      border: none;
+
+      color: black;
+      background-color: rgb(187, 253, 218);
+
+      color: white;
+      background-color: rgb(16, 53, 39);
+    }
+
+
+
+    figure {
+      display: block;
+      margin: 0 auto;
+    }
+
+    figcaption {
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* 2 notaphonosemantogram */
+    #notaphonosemantogram {
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    #notaphonosemantogram p:nth-child(1) {
+      font-size: 80%;
+    }
+
+    #notaphonosemantogram p:nth-child(2) {
+      color: rgb(233, 232, 202);
+    }
+
+    /* 3 treesection */
+
+
+
+    /* 28px/40px */
+    .tree {
+      font-size: calc(50vh / 17);
+      line-height: calc(50vh / 17 * 1.7);
+    }
+
+    .tree span {
+      /* style | variant | font size/line-height | family */
+      font-size: 0.7em;
+      line-height: 0.2em;
+    }
+
+    /* B1 taxogramsection */
+    #diagramsection {
+      margin: 5px auto;
+
+      align-items: center;
+      text-align: center;
+    }
+
+    #radialdiagram>svg {
+      max-width: 95%;
+      max-height: 85vh;
+    }
+
+    /*
+    .upordownrange input {
+      transform-origin: 75px 75px;
+
+      transform: rotate(-90deg);
+    }
+    */
+
+    footer.attached {
+      width: 93vw;
+    }
+  </style>
+
+  <style>
+    @media only screen and (max-width: 600px) {
+      body {
+        width: 100%;
+      }
+
+      main {
+        flex-direction: column-reverse;
+        /*
+        
+        */
+        width: 100%;
+        min-height: 100%;
+        height: auto;
+      }
+
+      .tabselection+aside {
+        flex-direction: row;
+
+        height: 5vh;
+        width: auto;
+      }
+      .tabselection+aside>* {
+        writing-mode: horizontal-tb;
+      }
+
+
+      #taxogramsection>* {
+        margin: 10px auto;
+      }
+
+
+      #detailssection,
+      #taxogramsection,
+      #notaphonosemantogram,
+      #treesection {
+        flex-wrap: wrap;
+        height: auto;
+        max-height: auto;
+      }
+
+      #tree {
+        height: auto;
+        width: 95%;
+      }
+
+      footer.attached {
+        position: relative;
+      }
+    }
+  </style>
+
+<body>
+
+  <main>
+
+
+    <div id="tabs" class="tabselection option1">
+
+      <!--       A flex container can't be set a none display, it must be wrapped with a div      -->
+      <div>
+        <section id="detailssection">
+          <section id="taxogramsection">
+
+            <div id="grapheme">
+              <div class="squared terminal logogramselectiontrigger">
+                <div class="content">
+                  <a id="selection" class="fittedtext">躑</a>
+                </div>
+              </div>
+              <div></div>
+            </div>
+
+            <div id="semantictaxogram">
+              <div class="squared"></div>
+              <div></div>
+            </div>
+
+            <div id="graphictaxogram">
+              <div class="squared"></div>
+              <div></div>
+            </div>
+
+          </section>
+
+          <div class="WarningArea"></div>
+          <section id="notaphonosemantogram"></section>
+
+          <section id="treesection">
+            <a></a>
+            <canvas id="tree"></canvas>
+
+            <div id="definitiontree"> </div>
+          </section>
+        </section>
+      </div>
+
+      <div>
+        <section id="diagramsection">
+          <header>
+            <div id="upordownrange" class="inputrange">
+              <label class="labelledrangeMin">Up</label>
+              <input onchange="renderdiagram();" type="range" min="0" max="1" value="0">
+              <label class="labelledrangeMax">Down</label>
+            </div>
+          </header>
+
+          <div id="radialdiagram"></div>
+        </section>
+      </div>
+
+      <section id="sentences">
+        <p>TEST</p>
+      </section>
+
+    </div>
+
+    <aside class="radiogroup">
+      <input type="radio" name="tab" id="option1" value="1" checked title="Decomposition section"
+        onchange="document.getElementById('tabs').className = 'tabselection option1';">
+      <label for="option1">Decomposition</label>
+
+      <input type="radio" name="tab" id="option2" value="2" title="Navigator section"
+        onchange="document.getElementById('tabs').className = 'tabselection option2';">
+      <label for="option2">Navigator</label>
+
+      <!--
+        <input id="option3" type="radio" value="3" title="Navigator section"
+          onchange="document.getElementById('tabs').className = 'tabselection option3';">
+        <label for="option3">TEST</label>
+        -->
+    </aside>
+    <script>
+      document.getElementById('option1').checked = true;
+      //$("#option1").prop("checked", true);
+      document.getElementById('tabs').className = 'tabselection option1';
+
+
+    </script>
+
+
+  </main>
+
+
+  <div id="logogramselectionModal" class="modal">
+    <div class="modal-content">
+      <div class="columns twocolumns">
+        <span class="resetbutton">RESET</span>
+        <span class="closebutton">&times;</span>
+      </div>
+      <div id='radicalselection'>
+        <div>
+          <span>⺀</span><span>⺊</span><span>⺌</span><span>⺍</span><span>川</span><span>亠</span><span>己</span><span>丨</span><span>丬</span><span>丶</span><span>丷</span><span>丿</span><span>乛</span><span>亅</span><span>兀</span><span>入</span><span>八</span><span>凵</span><span>刁</span><span>夊</span><span>孑</span><span>尣</span><span>屮</span><span>巳</span><span>干</span><span>弋</span><span>支</span><span>无</span><span>旡</span><span>曰</span><span>歺</span><span>毋</span><span>氺</span><span>炏</span><span>爻</span><span>玄</span><span>用</span><span>禸</span><span>竹</span><span>网</span><span>罓</span><span>羋</span><span>而</span><span>聿</span><span>肀</span><span>舛</span><span>艸</span><span>襾</span><span>西</span><span>訁</span><span>辰</span><span>辵</span><span>長</span><span>镸</span><span>长</span><span>阜</span><span>隶</span><span>靑</span><span>飛</span><span>飞</span><span>鬯</span><span>麻</span><span>黃</span><span>黄</span><span>龟</span><span>齐</span><span>龜</span><span>龠</span>
+        </div>
+        <div>
+          <span>⺈</span><span>⺗</span><span>⺮</span><span>⺳</span><span>⺼</span><span>尸</span><span>亻</span><span>彡</span><span>豕</span><span>巾</span><span>刀</span><span>㔾</span><span>谷</span><span>寸</span><span>纟</span><span>广</span><span>廴</span><span>白</span><span>心</span><span>扌</span><span>日</span><span>比</span><span>氵</span><span>瓜</span><span>皿</span><span>缶</span><span>艹</span><span>覀</span><span>糹</span><span>足</span><span>隹</span><span>魚</span><span>鳥</span><span>一</span><span>十</span><span>大</span><span>乙</span><span>乚</span><span>冫</span><span>幺</span><span>二</span><span>立</span><span>人</span><span>儿</span><span>冂</span><span>冖</span><span>车</span><span>马</span><span>几</span><span>夂</span><span>水</span><span>刂</span><span>彐</span><span>力</span><span>勹</span><span>匕</span><span>匚</span><span>匸</span><span>卜</span><span>口</span><span>卤</span><span>臣</span><span>卩</span><span>厂</span><span>厶</span><span>又</span><span>罒</span><span>囗</span><span>土</span><span>龙</span><span>士</span><span>夕</span><span>女</span><span>子</span><span>宀</span><span>小</span><span>尢</span><span>犬</span><span>户</span><span>山</span><span>巛</span><span>工</span><span>鹿</span><span>廾</span><span>弓</span><span>彑</span><span>彳</span><span>忄</span><span>戈</span><span>手</span><span>攴</span><span>攵</span><span>舌</span><span>文</span><span>斗</span><span>斤</span><span>方</span><span>月</span><span>木</span><span>欠</span><span>止</span><span>歹</span><span>殳</span><span>母</span><span>田</span><span>毛</span><span>氏</span><span>民</span><span>气</span><span>火</span><span>灬</span><span>爪</span><span>爫</span><span>父</span><span>爿</span><span>片</span><span>牙</span><span>牛</span><span>犭</span><span>玉</span><span>王</span><span>瓦</span><span>甘</span><span>生</span><span>疋</span><span>疒</span><span>癶</span><span>皮</span><span>目</span><span>矛</span><span>矢</span><span>石</span><span>示</span><span>礻</span><span>禾</span><span>鱼</span><span>穴</span><span>米</span><span>糸</span><span>羊</span><span>羽</span><span>老</span><span>耂</span><span>耒</span><span>耳</span><span>肉</span><span>自</span><span>至</span><span>臼</span><span>舟</span><span>艮</span><span>色</span><span>虍</span><span>虎</span><span>虫</span><span>饣</span><span>鬲</span><span>血</span><span>行</span><span>衣</span><span>衤</span><span>見</span><span>见</span><span>角</span><span>言</span><span>讠</span><span>豆</span><span>豸</span><span>貝</span><span>贝</span><span>赤</span><span>走</span><span>身</span><span>車</span><span>非</span><span>辛</span><span>辶</span><span>邑</span><span>阝</span><span>酉</span><span>釆</span><span>里</span><span>金</span><span>釒</span><span>钅</span><span>門</span><span>门</span><span>雨</span><span>青</span><span>面</span><span>革</span><span>韋</span><span>韦</span><span>韭</span><span>音</span><span>頁</span><span>页</span><span>風</span><span>风</span><span>食</span><span>飠</span><span>首</span><span>香</span><span>馬</span><span>骨</span><span>高</span><span>髟</span><span>鬥</span><span>鬼</span><span>鸟</span><span>鹵</span><span>麥</span><span>麦</span><span>黍</span><span>黑</span><span>黹</span><span>黽</span><span>黾</span><span>鼎</span><span>鼓</span><span>鼠</span><span>鼻</span><span>齊</span><span>齒</span><span>齿</span><span>龍</span><span>龶</span>
+        </div>
+        <div>
+          <span>⺷</span><span>占</span><span>乃</span><span>三</span><span>龺</span><span>兄</span><span>北</span><span>荅</span><span>答</span><span>少</span><span>思</span><span>夸</span><span>办</span><span>劦</span><span>买</span><span>厤</span><span>甲</span><span>反</span><span>丵</span><span>丁</span><span>不</span><span>尺</span><span>加</span><span>冏</span><span>冊</span><span>壴</span><span>叚</span><span>旨</span><span>惡</span><span>申</span><span>野</span><span>多</span><span>句</span><span>貫</span><span>云</span><span>尤</span><span>屾</span><span>凡</span><span>丞</span><span>杀</span><span>蒦</span><span>丹</span><span>切</span><span>盈</span><span>予</span><span>舍</span><span>廣</span><span>享</span><span>敕</span><span>死</span><span>旦</span><span>林</span><span>朿</span><span>臽</span><span>夬</span><span>灰</span><span>炎</span><span>熱</span><span>玨</span><span>男</span><span>众</span><span>引</span><span>巫</span><span>乞</span><span>系</span><span>熊</span><span>永</span><span>巠</span><span>炭</span><span>絲</span><span>危</span><span>芒</span><span>肃</span><span>肅</span><span>処</span><span>蟲</span><span>乑</span><span>尔</span><span>䍃</span><span>臤</span><span>盍</span><span>象</span><span>卉</span><span>戎</span><span>負</span><span>敖</span><span>戚</span><span>蜀</span><span>光</span><span>它</span><span>步</span><span>柰</span><span>訇</span><span>是</span><span>果</span><span>卑</span><span>取</span><span>䜌</span><span>亦</span><span>么</span><span>卖</span><span>賣</span>
+        </div>
+      </div>
+      <div id='logogramsfilter'>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="attached">
+    <div class="license">
+      <div>
+        <a href="https://creativecommons.org/licenses/by-nc/2.0/">
+          <img src="../../img/license_CC.png" />
+          <img src="../../img/license_Attribution.png" />
+          <img src="../../img/license_NonCommercial.png" />
+          <!--
+              <img class="invert" src="https://creativecommons.org/images/deed/cc_icon_white_x2.png" />
+              <img class="invert" src="https://creativecommons.org/images/deed/attribution_icon_white_x2.png" />
+              <img class="invert" src="https://creativecommons.org/images/deed/nc_white_x2.png" />
+              -->
+        </a>
+        <span>2019 <a href="../../aboutme.html">Alejandro Rojo</a></span><span> & <a href="./SOURCES.txt">other
+            sources</a></span>
+      </div>
+      <div>
+        <p>color key for <span style="color: blue">semantic </span> and <span style="color: red">phonetic</span>
+          components</p>
+
+      </div>
+      <div>
+        <a href="../../index.html" title="Title">Return</a> to main page
+      </div>
+    </div>
+
+  </footer>
+
+
+
+  <script src="./logogramselector.js"></script>
+  <script>
+    /**************************************************************
+   *                           MAIN
+   **************************************************************/
+    //#region
+
+    var currententry;
+    // after document is loaded
+    window.onload = function () {
+      var idArray = GetURLParameter("q")
+      console.log(idArray);
+      if (idArray !== undefined) {
+        for (var n = 0; n < idArray.length; n++) {
+          console.log(n, idArray[n], decodeURI(idArray[n]));
+        }
+
+        currententry = decodeURI(idArray[0]);
+        Run();
+
+      } else {
+        currententry = '喻';
+        Run();
+      }
+    }
+
+
+    var Run = function (char = currententry) {
+
+      var lg = logograms[char];
+      if (lg === undefined) {
+        $('.WarningArea').show().html('WARNING: Logogram not found');
+        return;
+      } else {
+        $('.WarningArea').hide().empty();
+      }
+
+
+      // Descomposición GRÁFICA
+      function ignore() {
+        var IDSstring = GetIDSstring(char); // ⿰⿱⿱⺈⿵⿰丨冂⿱⿻一丨一一⿱⿱⿰丶丷羊⿱⿱⿰丶丷一⿱⿰丨冂一  (鳝)
+        console.log(IDSstring);
+
+        //Non-Bracketted expression
+        if (!PrefixNotationCheck(IDSstring, IDSchars)) alert('wrong prefix expression');
+        var logogramCNObj = PrefixNotationCNObjetify(IDSstring, IDSchars); // Object
+        console.log('>\t', JSON.stringify(logogramCNObj));
+        // Bracketted expression
+        var BracketedExpression = objectToBracketedExpression(logogramCNObj); //[⿰[⿱[⿱[⺈][⿵[⿰[丨][？]][⿱[⿻[一][丨]][一]]]][一]][⿱[⿱[⿰[丶][？]][？]][⿱[⿱[⿰[丶][？]][一]][⿱[⿰[丨][？]][一]]]]]
+        console.log(BracketedExpression);
+      }
+      var gd = function () {
+        console.log('Descomposición GRÁFICA');
+        // wikimedia logograms decomposition
+        var logogramCNObjWikimedia = RecursiveAnnotation(char, getWikimedialogograms, true);
+        console.log(logogramCNObjWikimedia);
+        var BracketedExpression = objectToBracketedExpression(logogramCNObjWikimedia);    // Bracketted expression
+        console.log(BracketedExpression);
+
+        // Taxogram rendering
+        var section = $('#graphictaxogram div');
+        var ObjGrid = render.TaxoGridCSSFlex(logogramCNObjWikimedia, renderoptions.inline_alternating);
+        section.eq(0).empty().append(ObjGrid);
+        section.eq(1).html(`<a href="${'../../tools/binarydivision/binarydivision.html?q=' + encodeURI(BracketedExpression)}" target="_blank">graphic decomposition</a>`);
+        return logogramCNObjWikimedia;
+
+      }
+
+      // Descomposición SEMÁNTICO-FONÉTICA
+      var sd = function () {
+        console.log('Descomposición SEMÁNTICA');
+
+        // {"id":"陟","name":"陟","children":[{"id":"阝","name":"阝","color":"red"},{"id":"步","name":"步","color":"blue"}]}
+        var logogramCNObj = RecursiveAnnotation(char, getChildNodes, true);
+        console.log(logogramCNObj);
+        var BracketedExpression = objectToBracketedExpression(logogramCNObj);    // Bracketted expression
+        console.log('>\t', BracketedExpression, JSON.stringify(logogramCNObj));
+
+        // Taxogram rendering
+        var section = $('#semantictaxogram div');
+        var ObjGrid = render.TaxoGridCSSFlex(logogramCNObj, renderoptions.inline_alternating);
+        section.eq(0).empty().append(ObjGrid);
+        section.eq(1).html(`<a href="${'../../tools/binarydivision/binarydivision.html?q=' + encodeURI(BracketedExpression)}" target="_blank">semantic decomposition</a>
+            <a id="Exportobj">⬇</a>`);
+
+        hyperlinkDownload('Exportobj', 'objectdata' + char + '.json', JSON.stringify(logogramCNObj));
+
+        return logogramCNObj;
+
+      }
+
+
+      var isaphonosemantogram = false;
+      if ('etymology' in lg && lg.etymology !== undefined) {
+
+        var et = lg.etymology;
+        if ('type' in et && et.type !== undefined) {
+          var hint = '';
+          if ('hint' in et && et.hint !== undefined) hint = et.hint;
+
+          if (et.type == 'pictographic') {
+            $('#notaphonosemantogram').html(`
+                <p>This logogram is of <strong>pictographic</strong> origin and it was designed to visualize:</p>
+                <p>${hint}</p>`);
+          } else if (et.type == 'ideographic') {
+            $('#notaphonosemantogram').html(`
+                <p>This logogram is of <strong>ideographic</strong> origin and it was designed to evoke:</p>
+                <p>${hint}</p>`);
+            //<p>${lg.definition}</p>`);
+          } else {
+            isaphonosemantogram = true;
+            $('#notaphonosemantogram').empty();
+          }
+        }
+      }
+
+      var logogramCNObj = {};
+      if (isaphonosemantogram) {
+        logogramCNObj = sd();
+        RenderTrees(logogramCNObj);
+        gd();
+      } else {
+        logogramCNObj = gd();
+        RenderTrees(logogramCNObj);
+      }
+
+
+      $('#selection').text(char);
+      //◎◎ $('#selection').html(char);
+      var section = $('#grapheme>div');
+      section.eq(1).html(`<a href="${'https://www.unicode.org/cgi-bin/GetUnihanData.pl?codepoint=' + char}" target="_blank">Unihan</a>`);
+
+      renderdiagram(char);
+
+      Update();
+
+
+      /* Problemas
+      $('#canvas').html(svg.content.firstChild.outerHTML);
+      $('#canvas *').attr('xmlns', 'http://www.w3.org/2000/svg');
+  */
+    }
+
+    var RenderTrees = function (CNObj) {
+      $('#definitiontree').prepend(`<ul class="tree">${objectToList(CNObj)}</ul>`);
+
+
+      //options.fontcolor = 'white';
+      options.GridCellWidth = 100;
+      options.TextFractionofWidth = 1 / 2;
+      options.customstyle = ` 
+        g line {
+          stroke: #777;
+          stroke-width: 2px
+        } 
+        text {
+            font-family: 'Lucida Console Unicode', Arial, Helvetica, Serif;
+            font-size: ${options.fontsize}px;
+            # fill: white;
+            # fill: #666;
+            fill: white;
+        }
+        .tag {
+            font-weight: 700;
+        }
+        .extra {
+            font-size: 60%;
+            fill: #ffa4a4;
+            font-style: italic;
+        }`
+
+      console.log(JSON.stringify(CNObj));
+      var svg = Render(CNObj);
+      // console.log(svg.content.firstChild.outerHTML);
+
+      const canvas = document.getElementById("tree");
+      canvas.width = svg.ContainerSize.width;
+      canvas.height = svg.ContainerSize.height;
+      drawInlineSVG(canvas, svg.content.firstChild);
+
+    }
+
+    var renderdiagram = function (char = currententry) {
+
+      var range = $('#upordownrange input');
+      var value = range.prop('value');
+      // set defaults
+      $('#radialdiagram').empty();
+      range.prop('disabled', false);
+      $('#upordownrange .labelledrangeMin').css('text-decoration', 'none');
+      $('#upordownrange .labelledrangeMax').css('text-decoration', 'none');
+
+      var WayUp = IsRecursive(char, getParentNodes);
+      var WayDown = IsRecursive(char, getChildNodes);
+
+
+      var relateditems = {};
+      if (!WayUp) {
+        // console.log('NO UP');
+        range.prop('value', 1);
+        range.prop('disabled', true);
+        $('#upordownrange .labelledrangeMin').css('text-decoration', 'line-through');
+      } else if (range.prop('value') == 0) {
+        relateditems = RecursiveAnnotation(char, getParentNodes, true);
+      }
+
+      if (!WayDown) {
+        // console.log('NO DOWN');
+        range.prop('value', 0);
+        range.prop('disabled', true);
+        $('#upordownrange .labelledrangeMax').css('text-decoration', 'line-through');
+      } else if (range.prop('value') == 1) {
+        relateditems = RecursiveAnnotation(char, getChildNodes, true);
+      }
+
+      //console.log(char, value, relateditems);
+      if (WayUp || WayDown) {
+        var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+        console.log($('#diagramsection').height(), $('body>header').height(), $('body>footer').height(), $('#radialdiagram>header').height());
+        var usedheight = $('body>header').height() + $('body>footer').height() + $('#radialdiagram>header').height();
+        console.log(w, h, h - usedheight);
+
+        console.log($('#radialdiagram'));
+
+        d3Layout(logograms[char]);
+
+      }
+    }
+
+
+
+    // Convierte un objeto en una lista HTML
+    var objectToList = function (expr) {
+      var color = 'color' in expr ? `style="color: ${expr.color}"` : '';
+      var name = GetName(expr);
+
+      var lg = logograms[expr.id];
+
+      if ('children' in expr) {
+        var ul = '<ul>';
+        var children = expr.children;
+        for (var n = 0; n < children.length; n++) {
+          ul += objectToList(children[n]);
+        }
+        ul += '</ul>';
+      }
+
+
+      var pinyin = GetPronunciation(lg);
+      if (useIPA) var ipa = pinyin2ipa(pinyin, { toneMarker: 'chaoletter', superscript: true });
+      //     <span class="ipa">&frasl;${ipa}&frasl;</span>
+
+      return `<li>
+        <a href="?q=${name}" target="_blank" ${color}>${name}</a>
+        <span>${lg.definition}</span>
+        <span ${color}>${pinyin}</span>
+        ${ipa === undefined ? '' : `<span class="ipa">${ipa}</span>`}
+        ${ul === undefined ? '' : ul}</li>`;
+    }
+
+
+
+
+    var Update = function () {
+      console.log('>\tUpdate');
+
+
+      // Asocia una acción a cada celda
+      // $(".terminal").click(function (event) {});
+
+
+      // Assures a 1:1 square ratio for taxograms
+      var side = '25vh';
+      $('.squared').width(side).height(side);
+      $('.squared>*').width('100%').height('100%');
+
+
+      // Cambia el color aleatoriamente de cada celda
+      var get_random_color = function () {
+        var hue = getRandom(140, 160);
+        var saturation = getRandom(20, 100);
+        var luminosity = getRandom(75, 90);
+        var luminosity = getRandom(5, 15);
+        return `hsl(${hue}, ${saturation}%, ${luminosity}%)`;
+      }
+
+      $('.terminal>.content').each(function () {
+        if (this.style.backgroundColor === '') this.style.backgroundColor = get_random_color();
+      });
+
+      // Expande el texto de cada celda a las dimensiones del contenedor
+      /*
+      fitty('.fittedtext', { minSize: 1 });
+      $(".fittedtext").textfit('bestfit');
+      */
+      fittext();
+
+      console.log('>\tUpdate 2');
+    }
+    var fittext = function () {
+      $(".fittedtext").each(function (index) {
+        /*
+        console.log(
+          index + ": ", $(this).text(), $(this).width(), $(this).height(),
+          parent + ": ", $(this).parent().width(), $(this).parent().height()
+        );
+        */
+        var scale = Math.min(
+          $(this).parent().width() / $(this).width(),
+          $(this).parent().height() / $(this).height())
+        console.log(index + ": ", scale);
+        $(this).css('font-size', (0.8 * scale) + 'em');
+      });
+    }
+
+    //$(window).resize(fittext);
+    window.onresize = fittext;
+
+//#endregion
+
+  </script>
+</body>
+
+</html>

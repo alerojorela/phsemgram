@@ -1,0 +1,72 @@
+
+
+div.tooltip {
+    position: absolute;
+    max-width: 200px;
+    padding: 2px;
+
+    text-align: center;
+    font-size: 1em;
+
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+  }
+
+  div.tooltip th {
+    font-size: 3em;
+  }
+
+  div.tooltip tr.phon {
+    font-size: 1em;
+    color: red;
+  }
+
+
+
+  text {
+    font-size: 1.5em;
+  }
+
+  text .small {
+    font-size: 0.5em;
+  }
+
+  /* ROOT .root   svg g:first-child g:first-child text {} */
+
+  svg .root tspan {
+    font-size: 0.5em;
+  }
+
+  svg .root tspan.logogram {
+    font-size: 5em;
+  }
+
+  svg .root tspan.phon {
+    stroke: red;
+  }
+
+
+  svg path {
+    cursor: pointer;
+  }
+
+  svg .root path {
+    stroke: none;
+    opacity: 0;
+    fill: white;
+  }
+
+  svg .node path {
+    fill-rule: evenodd;
+    stroke: #fff;
+  }
+
+  /*
+
+  DOESN'T WORK
+  svg .node path:hover {
+    fill: orange;
+  }
+  */

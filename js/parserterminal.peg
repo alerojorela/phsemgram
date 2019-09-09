@@ -1,0 +1,13 @@
+expression = _? "[" _? children:(child:child _? {return child;})* "]"  
+        { return {children: children}; }
+
+child = e:expression
+		/ t:token {return {name: t}; }
+token = "«" s:nonreservedchar* "»" { return s.join("").trim(); }
+        / "\"" s:nonreservedchar* "\"" { return s.join("").trim(); }
+        / s:nonreservednonwhitespacechar+  { return s.join("").trim(); }
+
+nonreservednonwhitespacechar = [^ \t\n\r\[\]\"«»]
+nonreservedchar = [^\[\]\"«»]
+reservedchar = [\[\]\"«»]
+_ "whitespace" = [ \t\n\r]+

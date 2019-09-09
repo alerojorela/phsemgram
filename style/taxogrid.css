@@ -1,0 +1,174 @@
+
+
+
+.fittedtext {
+    font-weight: bold;
+    line-height: 1;
+    margin: 0;
+}
+
+
+/*
+.taxogram
+    .flexgrid
+        .branch
+            .terminal
+                .content
+    .cssgrid
+        .branch
+            .terminal
+                .content
+*/
+/**************************************************************
+ *                          flex
+ **************************************************************/
+/*
+c1, c2  or
+c1.c2   and
+
+problemas con esto que no comprendo, no permite AND
+div.flexCell.branch {
+*/
+
+.flexgrid .branch {
+    display: flex;
+
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    width: 100%;
+    height: 100%;
+}
+
+/**************************************************************
+ *                          GENÉRICO
+Aspecto visual sin propiedades específicas de un modelo CSS grid o Flex o SVG
+ **************************************************************/
+
+
+.taxogram{
+/* establishes external dimensions */
+
+text-align: center;
+}
+
+/* Root */
+.taxogram>div {
+    /* Expand to container boundary */
+    width: 100%;
+    height: 100%; 
+}
+
+.terminal {
+
+}
+
+.terminal>.content {
+    /* MARGIN BETWEEN CELLS
+        margin: 2px auto;
+        height: calc(100% - 4px);
+        width: calc(100% - 4px);
+    */
+    width: 100%;
+    height: 100%; 
+
+    background-color: #444;
+    color: #fff;
+
+}
+
+
+/* no funciona tras introducir la librería fitty */
+.content:hover {
+    background-color: olivedrab;
+    color: #444;
+}
+/*
+.terminal:hover {
+    background-color: olivedrab;
+    color: #444;
+}
+*/
+.terminal:hover {
+    background-color: black;
+}
+
+.content.selected {
+    /* reversed colors 
+    color: olivedrab;
+    background-color: #444;     
+    */
+    background-color: olivedrab;
+    color: #444;
+    /* Patrón background:url generado con http://www.patternify.com/ */
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAK0lEQVQImWPI7lP+j4xdXFz+M6ALZPcpIwRhAnBBZIHsPuX/DOgC2X3K/wFnwDMUm05a9AAAAABJRU5ErkJggg==) repeat;
+}
+
+
+/* Alineación vertical 
+https://teamtreehouse.com/community/center-span-element-vertically-inside-div */
+
+.terminal a, .terminal span {
+    padding: 3px;
+
+    text-decoration: none;
+    color: #fff;
+}
+.terminal .content {
+    /* center */
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*
+.terminal a, .terminal span {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+*/
+.terminal a img {
+    height: 80%;
+    width: 80%;
+}
+.taxogram a {
+
+}
+
+
+
+
+
+
+
+/**************************************************************
+ *                             SVG
+ **************************************************************/
+ .taxogram svg {
+    display: block;
+    margin: auto;
+}
+
+
+.taxogram rect {
+    stroke: gray;
+    stroke-width: 0.5;
+    fill: white;
+
+}
+
+.taxogram text {
+
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-family: Isocteur, Courier New, sans-serif;
+    font-size: 39;
+    color: red;
+
+    opacity: 1;
+}
+.taxogram text:hover { 
+    opacity: 0.2;
+}
+

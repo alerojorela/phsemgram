@@ -1,0 +1,243 @@
+/*
+Para documentos HTML con input, y con output gráficos
+*/
+/***************************
+****************************
+				LAYOUT
+****************************
+***************************/
+.flex {
+	width: 99%;
+	margin: 0 auto;
+	display: flex;
+	justify-content: space-between;
+}
+.center {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
+} 
+
+/***************************
+****************************
+			SVG
+****************************
+***************************/
+
+text.selected {
+	font-family: Ubuntu;
+	fill: red;
+}
+
+text {
+	font-family: Isocteur, Courier New, sans-serif;
+}
+
+rect:hover {
+	fill: none;
+	/* filter: brightness(190%);
+	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAEklEQVQYlWNgoBL4T7GCoW8FAGEXBfvNSmHvAAAAAElFTkSuQmCC
+	) repeat;
+	*/
+}
+
+#canvas {
+	height: 100px;
+}
+
+
+/***************************
+****************************
+			
+****************************
+***************************/
+a {
+	/*
+	color: red;
+	padding: 0em 1em;
+	*/
+	
+	text-decoration: none;
+}
+
+
+
+/*
+Para textos hechos con im�genes en vez de con tipos de letra est�ndar.
+*/
+textarea {
+	min-width: 100%;
+}
+
+.inputarea {
+	margin: 15px 0;
+}
+
+
+
+/*
+button {
+	background-color: #ddd;
+	border: none;
+
+	text-decoration: none;
+
+	cursor: pointer;
+	
+	height: 50px;
+	width: 70px;
+}
+*/
+
+
+body {
+	width: 95%;
+	min-width: 80vw;
+	background: none;
+
+	margin: 0 auto; /* para centrarlo */
+	text-align: left;
+	font-family: 'Century Gothic', 'Arial Narrow';
+
+	/*
+	Patr�n background:url generado con:
+	http://www.patternify.com/
+	https://codecondo.com/11-background-css-pattern-generators/
+	background:url(
+		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAFElEQVQImWNgIATu3bv3H78AUQAAtv8HM7euFB8AAAAASUVORK5CYII=
+	) repeat;
+		*/
+}
+@media only screen and (min-width: 600px) {
+	body {
+	    width: 50%;
+	}
+}
+
+
+
+/***************************
+****************************
+		  HEADERS
+****************************
+***************************/  
+header {
+	/* text-align: right; */
+}
+footer {
+	text-align: center;
+}
+
+
+h1, h2 {
+	text-transform: uppercase;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'Segoe Print', 'Trajan Pro', 'Calibri',  /* para Windows */
+				 'Chilanka', 'Purisa'; /* para Ubuntu */
+	color: purple;
+}
+h1:hover, h2:hover {
+	color: gray;
+}
+
+
+main {
+	/* background-color: #fff; */
+	 /* color distinto del de la p�gina  */
+	padding: 15px;
+}
+
+
+
+
+
+/***************************
+****************************
+			HIDDEN OBJECTS
+****************************
+***************************/  
+details {
+	border: 1px dotted blueviolet;
+	margin: 10px;
+}
+details>* { /* summary niega esta configuración */
+	padding: 0 20px;
+}
+details summary {
+	border: 1px dotted blueviolet;
+	border-right: 3px solid blueviolet;
+	color: blueviolet;
+	padding: none;
+}
+details summary:hover {
+	/* reverse colors */
+	background-color: blueviolet;
+	color: #fff;
+	cursor: pointer;
+}
+
+
+.hiddenBeforeProcessing {
+	display: none;
+}
+
+
+/***************************
+****************************
+		OTROS
+****************************
+***************************/  
+.WarningArea {
+	display:none;
+	margin: 10px 30px;
+	padding: 10px 20px;
+	border: 1px dotted gray;
+	border-left: 2px solid red;
+	color: red;
+}
+
+/***************************
+****************************
+		TABLES & LISTS
+****************************
+***************************/  
+  .minimalist th {
+	border-bottom: 3px solid;
+  }
+
+  td {
+	padding: 0 5px;
+  }
+
+  tbody tr:hover {
+	background-color: rgb(238, 238, 238);
+	}
+	
+
+
+
+
+	.table-of-contents {
+		background-color: #eee;
+	}
+  	.table-of-contents li {
+		list-style-type: none;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
