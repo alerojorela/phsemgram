@@ -6,7 +6,7 @@ This application displays a phonosemantogram components analysis by using tree, 
 
 All chinese characters are **logograms** (graphemes related directly to words, and not to ideas or images). They originated as primitive pictograms or ideograms, however most of them were designed as units composed from a phonetic and a semantic component which are named phonosemantograms.
 
-This application was designed to visualize phonosemantograms recursivity. For instance, it has been observed from the database that four phonosemantograms ([礴](https://alerojorela.neocities.org/writing/ChineseGraphemes/analysis.html?q=礴), [臟](https://alerojorela.neocities.org/writing/ChineseGraphemes/analysis.html?q=臟), [蘩](https://alerojorela.neocities.org/writing/ChineseGraphemes/analysis.html?q=蘩) & [蠮](https://alerojorela.neocities.org/writing/ChineseGraphemes/analysis.html?q=蠮)) have the maximum nesting level found in chinese phonosemantograms: four.
+This application was designed to visualize phonosemantograms recursivity. For instance, it has been observed from the database that four phonosemantograms ([礴](https://alerojorela.neocities.org/writing/chineseGraphemes/analysis.html?q=礴), [臟](https://alerojorela.neocities.org/writing/chineseGraphemes/analysis.html?q=臟), [蘩](https://alerojorela.neocities.org/writing/chineseGraphemes/analysis.html?q=蘩) & [蠮](https://alerojorela.neocities.org/writing/chineseGraphemes/analysis.html?q=蠮)) have the maximum nesting level found in chinese phonosemantograms: four.
 
 ![bee](./readme/readme_1蠮.png)
 
